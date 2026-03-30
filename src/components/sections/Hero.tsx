@@ -3,7 +3,7 @@ import bg from "../../assets/planer-hamburguer.jpg";
 export default function Hero() {
   return (
     <section
-      className="relative h-[90vh] flex items-center"
+      className="relative h-[100vh] flex items-center -mt-20"
       style={{
         backgroundImage: `url(${bg})`,
         backgroundSize: "cover",

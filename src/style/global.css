@@ -6,7 +6,7 @@ html {
 
 body {
   background: #fff7ed;
-  font-family: system-ui;
+  font-family: 'Inter', sans-serif;
 }
 
 /* TOAST */
@@ -49,4 +49,12 @@ body {
     transform: scale(4);
     opacity: 0;
   }
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
