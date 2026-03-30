@@ -9,7 +9,12 @@ const FRETE: Record<string, number> = {
 
 const BAIRROS = Object.keys(FRETE);
 
-export default function Carrinho() {
+// Recebe bottomOffset do App para não sobrepor o footer
+interface CarrinhoProps {
+  bottomOffset?: number;
+}
+
+export default function Carrinho({ bottomOffset = 24 }: CarrinhoProps) {
   const { itens, total } = usePedido();
 
   const [aberto, setAberto] = useState(false);
@@ -58,9 +63,9 @@ export default function Carrinho() {
     msg += `\n💵 Total final: R$ ${totalFinal.toFixed(2)}`;
 
     window.open(
-      `https://wa.me/558798210402?text=${encodeURIComponent(msg)}`
+      `https://wa.me/558798210401?text=${encodeURIComponent(msg)}` 
     );
-  };
+  }; //2
 
   return (
     <>
@@ -72,26 +77,28 @@ export default function Carrinho() {
         />
       )}
 
-      {/* BOTÃO */}
+      {/* BOTÃO CARRINHO — sobe dinamicamente antes do footer */}
       <button
         onClick={() => setAberto(true)}
-        className="fixed bottom-6 right-6 bg-[#ff3c00] text-white px-5 py-3 rounded-full shadow-lg flex items-center gap-2 z-50 hover:scale-105 active:scale-95 transition cursor-pointer"
+        className="fixed right-4 bg-[#ff3c00] text-white px-5 py-3 rounded-full shadow-lg flex items-center gap-2 z-50 hover:scale-105 active:scale-95 transition-all duration-300 cursor-pointer"
+        style={{ bottom: `${bottomOffset}px` }}
       >
         🛒
         {quantidadeTotal > 0 && (
           <span
-            className={`bg-white text-[#ff3c00] text-xs px-2 py-0.5 rounded-full font-bold ${
-              animar ? "scale-125" : ""
-            } transition`}
+            className={`bg-white text-[#ff3c00] text-xs px-2 py-0.5 rounded-full font-bold transition-transform ${
+              animar ? "scale-125" : "scale-100"
+            }`}
           >
             {quantidadeTotal}
           </span>
         )}
       </button>
 
-      {/* CARRINHO */}
+      {/* PAINEL DO CARRINHO */}
+      {/* No mobile ocupa tela inteira; no desktop fica em 360px */}
       <div
-        className={`fixed top-0 right-0 h-full w-[360px] bg-white z-50 transform transition-transform duration-300 ${
+        className={`fixed top-0 right-0 h-full w-full sm:w-[380px] bg-white z-50 transform transition-transform duration-300 ${
           aberto ? "translate-x-0" : "translate-x-full"
         } shadow-xl`}
       >
@@ -100,18 +107,31 @@ export default function Carrinho() {
           {/* HEADER */}
           <div className="flex justify-between items-center mb-4">
             <h2 className="font-bold text-lg">Seu Pedido</h2>
-            <button onClick={() => setAberto(false)}>✕</button>
+            <button
+              onClick={() => setAberto(false)}
+              className="text-gray-500 hover:text-gray-800 text-xl transition"
+            >
+              ✕
+            </button>
           </div>
 
           {/* ITENS */}
           <div className="flex-1 overflow-y-auto">
             {itens.length === 0 && (
-              <p className="text-gray-400">Carrinho vazio</p>
+              <p className="text-gray-400 text-sm mt-4">Carrinho vazio 🛒</p>
             )}
 
             {itens.map((item) => (
-              <div key={item.nome} className="mb-2 border-b pb-2">
-                {item.nome} x{item.qtd}
+              <div key={item.nome} className="mb-3 border-b pb-3 flex justify-between items-center">
+                <div>
+                  <p className="font-medium text-sm">{item.nome}</p>
+                  <p className="text-xs text-gray-500">
+                    R$ {item.preco.toFixed(2)} × {item.qtd}
+                  </p>
+                </div>
+                <p className="text-[#ff3c00] font-bold text-sm">
+                  R$ {(item.preco * item.qtd).toFixed(2)}
+                </p>
               </div>
             ))}
           </div>
@@ -123,10 +143,10 @@ export default function Carrinho() {
             <div className="flex gap-2 mb-3">
               <button
                 onClick={() => setTipo("retirada")}
-                className={`px-3 py-1 rounded transition ${
+                className={`flex-1 px-3 py-2 rounded text-sm font-medium transition ${
                   tipo === "retirada"
                     ? "bg-[#ff3c00] text-white"
-                    : "bg-gray-200"
+                    : "bg-gray-100 text-gray-700"
                 }`}
               >
                 Retirar
@@ -134,17 +154,17 @@ export default function Carrinho() {
 
               <button
                 onClick={() => setTipo("delivery")}
-                className={`px-3 py-1 rounded transition ${
+                className={`flex-1 px-3 py-2 rounded text-sm font-medium transition ${
                   tipo === "delivery"
                     ? "bg-[#ff3c00] text-white"
-                    : "bg-gray-200"
+                    : "bg-gray-100 text-gray-700"
                 }`}
               >
                 Delivery
               </button>
             </div>
 
-            {/* 🔥 TRANSIÇÃO SUAVE */}
+            {/* CAMPOS DE DELIVERY — transição suave */}
             <div
               className={`transition-all duration-300 overflow-hidden ${
                 tipo === "delivery"
@@ -153,12 +173,10 @@ export default function Carrinho() {
               }`}
             >
               <div className="flex flex-col gap-2 mt-2">
-
-                {/* SELECT BAIRRO */}
                 <select
                   value={bairro}
                   onChange={(e) => setBairro(e.target.value)}
-                  className="border p-2 rounded"
+                  className="border p-2 rounded text-sm"
                 >
                   <option value="">Selecione o bairro</option>
                   {BAIRROS.map((b) => (
@@ -170,7 +188,7 @@ export default function Carrinho() {
                   placeholder="Endereço completo"
                   value={endereco}
                   onChange={(e) => setEndereco(e.target.value)}
-                  className="border p-2 rounded"
+                  className="border p-2 rounded text-sm"
                 />
 
                 <p className="text-sm">
@@ -180,7 +198,7 @@ export default function Carrinho() {
             </div>
           </div>
 
-          {/* TOTAL */}
+          {/* TOTAL + FINALIZAR */}
           <div className="mt-4 border-t pt-3">
             <p className="font-bold text-lg">
               Total: R$ {totalFinal.toFixed(2)}
@@ -188,11 +206,12 @@ export default function Carrinho() {
 
             <button
               onClick={finalizarPedido}
-              className="w-full bg-[#ff3c00] text-white py-3 rounded mt-3 hover:opacity-90 transition cursor-pointer"
+              className="w-full bg-[#ff3c00] text-white py-3 rounded-lg mt-3 hover:opacity-90 active:scale-95 transition cursor-pointer font-semibold"
             >
-              Finalizar Pedido
+              Finalizar Pedido via WhatsApp 🚀
             </button>
           </div>
+
         </div>
       </div>
     </>
