@@ -17,7 +17,6 @@ export default function App() {
 
       const footerRect = footerRef.current.getBoundingClientRect();
       const viewportHeight = window.innerHeight;
-      const buttonZone = 100; // altura estimada que os dois botões ocupam
 
       if (footerRect.top < viewportHeight) {
         // footer está visível: empurra botões para cima
@@ -53,7 +52,7 @@ export default function App() {
 
         {/* Botão WhatsApp fixo — sobe junto quando footer aparece */}
         <a
-          href="https://wa.me/558798210401" //2
+          href="https://wa.me/558798210401"
           target="_blank"
           rel="noreferrer"
           className="fixed right-4 z-50 bg-green-500 p-3 rounded-full shadow-lg hover:scale-105 transition-all duration-300"
